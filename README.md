@@ -123,6 +123,7 @@ const authModal = document.getElementById("authModal");
 const authForm = document.getElementById("authForm");
 const authMessage = document.getElementById("authMessage");
   document.getElementById("upload").onclick = () => {
+
   const panel = document.getElementById("uploadPanel");
   panel.style.display =
     panel.style.display === "none" ? "block" : "none";
