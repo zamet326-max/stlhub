@@ -96,7 +96,78 @@ footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-s
 </section>
 </main>
 <footer><div class="wrap footerrow"><div class="logo">STL<span>Hub</span></div><div>© <span id="year"></span> STLHub</div></div></footer>
+  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+  
+const SUPABASE_URL = "sb_publishable_zKwhaS8Wv1JLvaqJhSf3GA_5d6l93J8";
+const SUPABASE_KEY = "sb_secret_e-6x3igTcS01b7-5Qn8kWQ_5RmMPRW4";
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let authMode = "login";
+
+const authModal = document.getElementById("authModal");
+const authForm = document.getElementById("authForm");
+const authMessage = document.getElementById("authMessage");
+
+document.getElementById("login").onclick = () => {
+  authModal.style.display = "flex";
+  authMessage.textContent = "";
+};
+
+document.getElementById("authClose").onclick = () => {
+  authModal.style.display = "none";
+};
+
+document.getElementById("authSwitch").onclick = () => {
+  authMode = authMode === "login" ? "signup" : "login";
+  document.getElementById("authTitle").textContent =
+    authMode === "login" ? "STLHub'a giriş yap" : "STLHub'a kayıt ol";
+  document.getElementById("authSubmit").textContent =
+    authMode === "login" ? "Giriş yap" : "Kayıt ol";
+  document.getElementById("authSwitch").textContent =
+    authMode === "login" ? "Hesabın yok mu? Kayıt ol" : "Hesabın var mı? Giriş yap";
+  authMessage.textContent = "";
+};
+
+authForm.onsubmit = async (event) => {
+  event.preventDefault();
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+
+  const submit = document.getElementById("authSubmit");
+  submit.disabled = true;
+  authMessage.textContent = "İşlem yapılıyor...";
+
+  try {
+    const result = authMode === "login"
+      ? await sb.auth.signInWithPassword({ email, password })
+      : await sb.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin + window.location.pathname
+          }
+        });
+
+    if (result.error) throw result.error;
+
+    authMessage.textContent = authMode === "login"
+      ? "Giriş başarılı!"
+      : "Kayıt isteği alındı. E-posta doğrulaması için gelen kutunu kontrol et.";
+
+    if (authMode === "login") {
+      document.getElementById("login").textContent = "Hesabım";
+      setTimeout(() => authModal.style.display = "none", 1200);
+    }
+  } catch (error) {
+    authMessage.textContent = "İşlem başarısız: " + error.message;
+  } finally {
+    submit.disabled = false;
+  }
+};
+
 const models=[
 {title:"Modern saksı",cat:"Dekorasyon",emoji:"🪴",desc:"Masa ve raflar için modern saksı tasarımı."},
 {title:"Masaüstü düzenleyici",cat:"Masaüstü",emoji:"🗂️",desc:"Kalem ve küçük eşyalar için düzenleyici."},
@@ -121,6 +192,23 @@ document.getElementById("login").onclick=()=>alert("Üyelik sistemi sonraki adı
 document.getElementById("upload").onclick=()=>alert("Model ekleme sistemi henüz etkin değil.");
 document.getElementById("year").textContent=new Date().getFullYear();
 render();
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </script>
+  
+<div id="authModal" style="display:none;position:fixed;inset:0;z-index:1000;background:#000b;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#1b1d2c;color:white;padding:25px;border-radius:18px;width:min(420px,100%);border:1px solid #303249">
+    <h2 id="authTitle">STLHub'a giriş yap</h2>
+    <p style="color:#a6a8c0">Modelleri keşfetmek için hesabını kullan.</p>
+    <form id="authForm">
+      <input id="authEmail" type="email" placeholder="E-posta adresin" required style="display:block;width:100%;padding:13px;margin:12px 0;background:#10111b;color:white;border:1px solid #303249;border-radius:9px">
+      <input id="authPassword" type="password" placeholder="Şifre (en az 6 karakter)" minlength="6" required style="display:block;width:100%;padding:13px;margin:12px 0;background:#10111b;color:white;border:1px solid #303249;border-radius:9px">
+      <button id="authSubmit" class="btn" type="submit" style="width:100%">Giriş yap</button>
+    </form>
+    <p id="authMessage" style="font-size:13px;line-height:1.6"></p>
+    <button id="authSwitch" class="smallbtn" type="button">Hesabın yok mu? Kayıt ol</button>
+    <button id="authClose" class="smallbtn" type="button">Kapat</button>
+  </div>
+</div>
+
 </body>
 </html>
