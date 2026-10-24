@@ -87,6 +87,18 @@ footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-s
 <button class="chip" data-cat="Pratik">🛠️ Pratik</button>
 </div>
 <div class="grid" id="grid"></div>
+  <div id="uploadPanel" style="display:none; margin:20px 0; padding:20px; border:1px solid #303249; border-radius:14px;">
+  <h3>STL modelini yükle</h3>
+  <p>Yalnızca .stl uzantılı dosya seç.</p>
+
+  <input id="stlFile" type="file" accept=".stl,model/stl">
+
+  <input id="stlTitle" type="text" placeholder="Model adı"
+    style="display:block;width:100%;padding:12px;margin:12px 0;">
+
+  <button class="btn" id="sendStl" type="button">STL dosyasını yükle</button>
+  <p id="uploadMessage"></p>
+</div>
 <p class="muted">Kartlar şimdilik örnektir; gerçek STL dosyaları henüz bağlanmadı.</p>
 </section>
 <section class="wrap banner" id="about">
@@ -110,6 +122,11 @@ let authMode = "login";
 const authModal = document.getElementById("authModal");
 const authForm = document.getElementById("authForm");
 const authMessage = document.getElementById("authMessage");
+  document.getElementById("upload").onclick = () => {
+  const panel = document.getElementById("uploadPanel");
+  panel.style.display =
+    panel.style.display === "none" ? "block" : "none";
+};
 
 document.getElementById("login").onclick = () => {
   authModal.style.display = "flex";
@@ -189,7 +206,6 @@ document.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{cat=b.dataset.
 document.getElementById("searchForm").onsubmit=e=>{e.preventDefault();q=document.getElementById("search").value.trim();render();};
 document.getElementById("all").onclick=()=>{cat="Tümü";q="";document.getElementById("search").value="";document.querySelectorAll("[data-cat]").forEach(b=>b.classList.toggle("active",b.dataset.cat==="Tümü"));render();};
 document.getElementById("login").onclick=()=>alert("Üyelik sistemi sonraki adımda Supabase ile bağlanacak.");
-document.getElementById("upload").onclick=()=>alert("Model ekleme sistemi henüz etkin değil.");
 document.getElementById("year").textContent=new Date().getFullYear();
 render();
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
